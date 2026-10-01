@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shape</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body { margin: 0; }
+    * { box-sizing: border-box; }
+    .fs-node { position: absolute; display: flex; align-items: center; justify-content: center; text-align: center; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 14px; padding: 0 10px; height: 50px; }
+    .fs-agent { border-radius: 999px; background: oklch(0.94 0.03 200); border: 2px solid oklch(0.60 0.13 200); color: oklch(0.28 0.08 200); }
+    .fs-stop { border-radius: 14px; background: oklch(0.94 0.03 320); border: 2px solid oklch(0.60 0.13 320); color: oklch(0.35 0.1 320); }
+    .fs-neutral { border-radius: 12px; background: white; border: 2px solid oklch(0.88 0.02 75); color: oklch(0.35 0.02 60); }
+    .fs-line { position: absolute; background: oklch(0.75 0.02 75); }
+    .fs-label { position: absolute; font-size: 12px; font-weight: 600; color: oklch(0.5 0.02 60); background: oklch(0.93 0.025 75); padding: 2px 7px; border-radius: 6px; white-space: nowrap; }
+    .fs-canvas { position: absolute; left: 0; top: 0; }
+    .st-node { position: absolute; border-radius: 12px; background: white; border: 2px solid oklch(0.88 0.02 75); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 10px; }
+    .st-name { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 17px; color: inherit; }
+    .st-note { font-size: 12.5px; line-height: 1.2; color: oklch(0.52 0.02 60); margin-top: 1px; white-space: nowrap; }
+    .st-model { border-width: 3px; border-color: oklch(0.60 0.13 200); background: oklch(0.975 0.018 200); }
+    .st-code { border-style: dashed; }
+    .st-term { border-radius: 999px; background: oklch(0.24 0.02 60); border-color: oklch(0.24 0.02 60); color: white; }
+    .st-rec { border-color: oklch(0.60 0.13 320); background: oklch(0.975 0.018 320); }
+    .st-slabel { position: absolute; font-size: 11px; line-height: 1; padding: 1px 6px; border-radius: 5px; font-weight: 600; color: oklch(0.5 0.02 60); background: oklch(0.93 0.025 75); white-space: nowrap; }
+    .st-node, .fs-line, .fs-label, .st-slabel, .st-pline, .st-plabel, .st-backh, .st-backv { transition: opacity 0.25s ease; }
+    .st-pline { position: absolute; background: oklch(0.60 0.13 320); }
+    .st-plabel { position: absolute; font-size: 10.5px; font-weight: 700; color: oklch(0.42 0.11 320); white-space: nowrap; }
+    .st-backv { position: absolute; background-image: repeating-linear-gradient(to bottom, oklch(0.72 0.02 75) 0 6px, transparent 6px 11px); }
+    .st-backh { position: absolute; background-image: repeating-linear-gradient(to right, oklch(0.72 0.02 75) 0 6px, transparent 6px 11px); }
+    .fs-panel { position: absolute; border-radius: 18px; background: white; border: 2px solid oklch(0.88 0.02 75); }
+    .fs-ptitle { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 15px; color: oklch(0.28 0.02 60); }
+    .fs-chip { display: flex; align-items: center; justify-content: center; height: 36px; border-radius: 10px; background: oklch(0.96 0.014 75); border: 1.5px solid oklch(0.89 0.02 75); font-size: 12.5px; font-weight: 600; color: oklch(0.36 0.02 60); }
+    .fs-tool { display: flex; align-items: center; justify-content: center; height: 30px; border-radius: 9px; background: oklch(0.95 0.028 320); border: 1.5px solid oklch(0.68 0.11 320); font-size: 12px; font-weight: 600; color: oklch(0.35 0.1 320); }
+    .fs-count { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px; background: oklch(0.94 0.03 200); border: 1.5px solid oklch(0.60 0.13 200); color: oklch(0.28 0.08 200); font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 12px; }
+    .fs-body { font-size: 13px; line-height: 1.4; color: oklch(0.38 0.02 60); }
+  </style>
+</head>
+<body style="margin:0;background:oklch(0.97 0.012 75);font-family:'Manrope',sans-serif;color:oklch(0.24 0.02 60);">
+<div style="position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden;padding:18px 20px 16px;">
+  <div style="flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+    <div id="box" style="position:relative;">
+      <div id="inner" style="position:relative;width:880px;height:410px;transform-origin:top left;">
+        <div class="fs-canvas" id="canvas" style="width:880px;height:410px;">
+            <div class="st-node st-term" data-ns="1" style="left:160px;top:0;width:260px;height:32px;"><div class="st-name">CART IN</div></div>
+            <div class="st-node st-code" data-ns="1" style="left:160px;top:50px;width:260px;height:44px;"><div class="st-name">GATE</div><div class="st-note">consent and eligibility, in code</div></div>
+            <div class="st-node st-code" data-ns="2" style="left:160px;top:112px;width:260px;height:44px;"><div class="st-name">RETRIEVE</div><div class="st-note">6 lookups in parallel, cached</div></div>
+            <div class="st-node st-model" data-ns="3" style="left:160px;top:174px;width:260px;height:44px;"><div class="st-name">STRATEGIST</div><div class="st-note">model — the strongest allowed offer</div></div>
+            <div class="st-node st-code" data-ns="4" style="left:160px;top:236px;width:260px;height:44px;"><div class="st-name">FIELD CHECK</div><div class="st-note">bounds, in code</div></div>
+
+            <div class="st-node st-model" data-ns="5" style="left:540px;top:0;width:260px;height:44px;"><div class="st-name">ECON</div><div class="st-note">model — refute it or fund it</div></div>
+            <div class="st-node st-code" data-ns="6" style="left:540px;top:62px;width:260px;height:44px;"><div class="st-name">EVALUATE</div><div class="st-note">coherence and bounds, in code</div></div>
+            <div class="st-node st-model" data-ns="5" style="left:540px;top:124px;width:260px;height:44px;"><div class="st-name">VOICE</div><div class="st-note">model — write the message</div></div>
+            <div class="st-node st-code" data-ns="8" style="left:540px;top:186px;width:260px;height:44px;background:linear-gradient(to right, white 0 50%, oklch(0.975 0.018 200) 50% 100%);"><div class="st-name">VERIFY</div><div class="st-note">8 checks, then a register model</div></div>
+            <div class="st-node st-code" data-ns="9" style="left:540px;top:248px;width:260px;height:44px;"><div class="st-name">HUMAN REVIEW</div><div class="st-note">queue it for the marketer</div></div>
+
+            <div class="st-node st-rec" data-ns="2" style="left:160px;top:310px;width:260px;height:44px;"><div class="st-name">RECORD</div><div class="st-note">outcome and trail</div></div>
+            <div class="st-node st-term" data-ns="10" style="left:160px;top:372px;width:260px;height:32px;"><div class="st-name">DONE</div></div>
+
+            <div class="fs-line" data-es="1" style="left:289px;top:32px;width:2px;height:18px;"></div>
+            <div class="fs-line" data-es="2" style="left:289px;top:94px;width:2px;height:18px;"></div>
+            <div class="fs-line" data-es="3" style="left:289px;top:156px;width:2px;height:18px;"></div>
+            <div class="fs-line" data-es="4" style="left:289px;top:218px;width:2px;height:18px;"></div>
+            <div class="fs-line" data-es="10" style="left:289px;top:354px;width:2px;height:18px;"></div>
+            <div class="st-slabel" data-es="2" style="left:296px;top:97px;">eligible</div>
+            <div class="st-slabel" data-es="3" style="left:296px;top:159px;">context found</div>
+
+            <div class="fs-line" data-es="6" style="left:669px;top:44px;width:2px;height:18px;"></div>
+            <div class="fs-line" data-es="7" style="left:669px;top:106px;width:2px;height:18px;"></div>
+            <div class="fs-line" data-es="8" style="left:669px;top:168px;width:2px;height:18px;"></div>
+            <div class="fs-line" data-es="9" style="left:669px;top:230px;width:2px;height:18px;"></div>
+            <div class="st-slabel" data-es="9" style="left:676px;top:233px;">pass</div>
+            <div class="st-slabel" data-es="7" style="left:676px;top:109px;">fund it</div>
+
+            <div class="fs-line" data-es="5" style="left:420px;top:249px;width:95px;height:2px;"></div>
+            <div class="fs-line" data-es="5" style="left:513px;top:22px;width:2px;height:228px;"></div>
+            <div class="fs-line" data-es="5" style="left:513px;top:21px;width:27px;height:2px;"></div>
+            <div class="st-slabel" data-es="5" style="left:424px;top:232px;">discount or seat bump</div>
+            <div class="fs-line" data-es="5" style="left:420px;top:269px;width:70px;height:2px;"></div>
+            <div class="fs-line" data-es="5" style="left:488px;top:146px;width:2px;height:124px;"></div>
+            <div class="fs-line" data-es="5" style="left:488px;top:145px;width:52px;height:2px;"></div>
+            <div class="st-slabel" data-es="5" style="left:424px;top:273px;">nudge</div>
+
+            <div class="fs-line" data-es="10" style="left:668px;top:292px;width:2px;height:14px;"></div>
+            <div class="fs-line" data-es="10" style="left:420px;top:305px;width:250px;height:2px;"></div>
+
+            <div class="st-backh" data-es="5" style="left:130px;top:267px;width:30px;height:2px;"></div>
+            <div class="st-backv" data-es="5" style="left:128px;top:196px;width:2px;height:72px;"></div>
+            <div class="st-backh" data-es="5" style="left:130px;top:195px;width:30px;height:2px;"></div>
+
+            <div class="st-backh" data-es="7" style="left:460px;top:91px;width:80px;height:2px;"></div>
+            <div class="st-backv" data-es="7" style="left:458px;top:33px;width:2px;height:59px;"></div>
+            <div class="st-backh" data-es="7" style="left:460px;top:32px;width:80px;height:2px;"></div>
+
+            <div class="st-backh" data-es="9" style="left:470px;top:219px;width:70px;height:2px;"></div>
+            <div class="st-backv" data-es="9" style="left:468px;top:157px;width:2px;height:63px;"></div>
+            <div class="st-backh" data-es="9" style="left:470px;top:156px;width:70px;height:2px;"></div>
+
+            <div class="st-backh" data-es="7" style="left:448px;top:100px;width:92px;height:2px;"></div>
+            <div class="st-backv" data-es="7,9" style="left:446px;top:100px;width:2px;height:122px;"></div>
+            <div class="st-backh" data-es="9" style="left:448px;top:221px;width:92px;height:2px;"></div>
+            <div class="st-backh" data-es="7,9" style="left:420px;top:205px;width:28px;height:2px;"></div>
+
+            <div class="st-pline" data-es="2" style="left:100px;top:71px;width:60px;height:2px;"></div>
+            <div class="st-pline" data-es="3" style="left:100px;top:133px;width:60px;height:2px;"></div>
+            <div class="st-pline" data-es="5" style="left:100px;top:273px;width:60px;height:2px;"></div>
+            <div class="st-pline" data-es="2,3,5" style="left:98px;top:71px;width:2px;height:261px;"></div>
+            <div class="st-pline" data-es="2,3,5" style="left:98px;top:331px;width:62px;height:2px;"></div>
+            <div class="st-plabel" data-es="2" style="left:0;top:53px;">barred</div>
+            <div class="st-plabel" data-es="3" style="left:0;top:115px;">no context</div>
+            <div class="st-plabel" data-es="5" style="left:0;top:255px;">bound broken ×2</div>
+
+            <div class="st-pline" data-es="6" style="left:800px;top:32px;width:40px;height:2px;"></div>
+            <div class="st-pline" data-es="7" style="left:800px;top:94px;width:40px;height:2px;"></div>
+            <div class="st-pline" data-es="8" style="left:800px;top:156px;width:40px;height:2px;"></div>
+            <div class="st-pline" data-es="9" style="left:800px;top:218px;width:40px;height:2px;"></div>
+            <div class="st-pline" data-es="6,7,8,9" style="left:838px;top:32px;width:2px;height:300px;"></div>
+            <div class="st-pline" data-es="6,7,8,9" style="left:420px;top:331px;width:420px;height:2px;"></div>
+            <div class="st-plabel" data-es="6,7,8,9" style="left:440px;top:310px;">no usable answer · will not fund ×2 · refused ×2</div>
+
+            <div style="position:absolute;left:440px;top:344px;width:420px;display:grid;grid-template-columns:1fr 1fr;gap:5px 14px;font-size:11.5px;color:oklch(0.45 0.02 60);">
+              <div>solid line — it passed</div>
+              <div>dashed line — one retry, then it fails</div>
+              <div>thick blue border — a model decides</div>
+              <div>dashed border — a rule in code decides</div>
+            </div>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+  <div style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:6px;padding-top:10px;">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div id="stepLabel" style="font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;color:oklch(0.45 0.02 60);width:74px;text-align:right;">1 / 11</div>
+      <input id="slider" type="range" min="1" max="11" step="1" value="1" style="width:560px;accent-color:oklch(0.24 0.02 60);">
+    </div>
+    <div id="stepCaption" style="font-size:14.5px;line-height:1.35;color:oklch(0.32 0.02 60);text-align:center;max-width:720px;"></div>
+  </div>
+</div>
+<script>
+  var maxStep = 11;
+  var natW = 880, natH = 410;
+  var captions = [
+    "A cart arrives and meets the gate.",
+    "The gate is code: consent and eligibility. Barred carts are recorded, not dropped.",
+    "Retrieve pulls the six lookups at once. Nothing to work with, and it is recorded.",
+    "The strategist proposes the strongest offer the policy allows.",
+    "Field check is code. A nudge skips ahead, a discount goes to econ, a broken bound gets one retry.",
+    "Econ argues with the offer: refute it or fund it.",
+    "Evaluate is code. Incoherent goes back to econ, unfunded goes back to the strategist.",
+    "Voice writes the message. It has no say in what the offer is.",
+    "Verify runs eight mechanical checks. A copy fault returns to voice, a decision fault to the strategist.",
+    "A person reads every proposal, then the outcome and the whole trail are written down.",
+    "The whole shape. Every model step is boxed in by a rule in code."
+  ];
+  var canvas = document.getElementById('canvas');
+  var slider = document.getElementById('slider');
+  var stepLabel = document.getElementById('stepLabel');
+  var stepCaption = document.getElementById('stepCaption');
+  var box = document.getElementById('box');
+  var inner = document.getElementById('inner');
+
+  function applyStep(step) {
+    canvas.querySelectorAll('[data-ns]').forEach(function (n) {
+      n.style.opacity = step >= Number(n.dataset.ns) ? '1' : '0';
+    });
+    canvas.querySelectorAll('[data-es]').forEach(function (n) {
+      var on = step < maxStep && n.dataset.es.split(',').indexOf(String(step)) !== -1;
+      n.style.opacity = on ? '1' : '0';
+    });
+    stepLabel.textContent = step + ' / ' + maxStep;
+    stepCaption.textContent = captions[step - 1];
+  }
+
+  function resize() {
+    var w = window.innerWidth, h = window.innerHeight - 120;
+    var scale = Math.min(1.6, (w - 40) / natW, (h - 20) / natH);
+    box.style.width = (natW * scale) + 'px';
+    box.style.height = (natH * scale) + 'px';
+    inner.style.transform = 'scale(' + scale + ')';
+  }
+
+  slider.addEventListener('input', function () { applyStep(Number(slider.value)); });
+  window.addEventListener('resize', resize);
+  applyStep(1);
+  resize();
+</script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+/* Patrick Boudreaux — Portfolio styles */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --gold: #1F4E79;
+  --gold-light: color-mix(in oklab, var(--gold), white 28%);
+  --gold-dim: var(--gold);
+  --ink: #1A1F26;
+  --ink-soft: #363B43;
+  --ink-panel: #1A1F26;
+  --ink-mute: #646A73;
+  --white: #F6F6F2;
+  --off-white: #EDEDE6;
+  --muted: #646A73;
+  --rule: #D6D5CC;
+  --rule-soft: #E3E2DA;
+  --amber: #646A73;
+  --accent-bg: #E6F1FB;
+  --accent-blue: #4A8CCA;
+  --accent-green: #4CAF7A;
+  --border-light: var(--rule);
+  --border-dark: var(--rule);
+  --ff-display: 'Playfair Display', Georgia, serif;
+  --ff-body: 'DM Sans', system-ui, sans-serif;
+  --ff-mono: 'DM Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; }
+html { scroll-behavior: smooth; }
+::selection { background: rgba(15,110,102,0.18); }
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #EAEEEB; }
+::-webkit-scrollbar-thumb { background: #D4D6D1; border: 3px solid #EAEEEB; border-radius: 8px; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+@keyframes eq { 0%, 100% { transform: scaleY(0.22); } 50% { transform: scaleY(1); } }
+
+.pdf-btn { transition: border-color 0.18s, background 0.18s, color 0.18s; }
+.pdf-btn:hover { border-color: var(--gold-light); background: color-mix(in oklab, var(--gold), transparent 78%); color: #fff; }
+
+/* Project-management path palette */
+body.path-pm .eng-only { display: none; }
+body.path-pm {
+  --gold: #8A5323;
+  --accent-bg: #F7EDE3;
+  --accent-blue: #C08A4A;
+}
+
+/* Path toggle */
+.path-toggle {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--white);
+  flex-shrink: 0;
+}
+.path-toggle button {
+  font-family: var(--ff-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  border: none;
+  background: none;
+  color: var(--ink-mute);
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
+}
+.path-toggle button:hover { color: var(--ink); }
+.path-toggle button[aria-pressed="true"] { background: var(--gold); color: #fff; }
+@keyframes think { 0%, 80%, 100% { transform: scale(0.55); opacity: 0.3; } 40% { transform: scale(1); opacity: 1; } }
+
+body {
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--ff-body);
+  font-size: 16px;
+  line-height: 1.7;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Navigation */
+.nav-links { display: flex; min-width: 0; }
+.hamburger { display: none; }
+.mobile-menu { display: none; }
+.mobile-menu.open { display: flex; }
+
+.nav-link {
+  color: var(--ink-mute);
+  text-decoration: none;
+  font-size: 13px;
+  padding: 0.4rem 0.75rem;
+  border-radius: 4px;
+  display: inline-block;
+  transition: 0.25s;
+}
+.nav-link:hover { color: var(--ink); background: var(--off-white); }
+
+@media (max-width: 1039px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  nav > div:first-of-type > .path-toggle { display: none; }
+}
+@media (min-width: 1040px) {
+  .mobile-menu { display: none !important; }
+}
+
+/* Hover links */
+.contact-link { transition: 0.25s; }
+.contact-link:hover { color: var(--gold-light) !important; }
+
+.email-btn { transition: 0.25s; }
+.email-btn:hover { background: var(--gold-light); }
+
+.msu-link { transition: 0.25s; }
+.msu-link:hover { background: var(--accent-bg); }
